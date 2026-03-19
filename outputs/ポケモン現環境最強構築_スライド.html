@@ -394,6 +394,7 @@
       background: rgba(255, 255, 255, 0.055);
       color: #eef3fb;
       font-size: 15px;
+      white-space: nowrap;
     }
 
     .team-card {
@@ -437,6 +438,12 @@
       gap: 12px;
       font-size: 24px;
       font-weight: 700;
+      flex-wrap: nowrap;
+    }
+
+    .team-name .name {
+      white-space: nowrap;
+      line-height: 1.15;
     }
 
     .badge {
@@ -562,6 +569,15 @@
       letter-spacing: 0.04em;
     }
 
+    .nowrap {
+      white-space: nowrap;
+    }
+
+    .forced-break {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
     @media (max-width: 980px) {
       .slide {
         padding: 28px 22px 64px;
@@ -620,7 +636,7 @@
               </div>
               <div class="stat">
                 <div class="label">今回の結論</div>
-                <div class="value" style="font-size:26px;">コライ×ホウオウ</div>
+                <div class="value" style="font-size:24px;"><span class="nowrap">コライ×ホウオウ</span></div>
                 <div class="sub">圧力と受けを両立．</div>
               </div>
               <div class="stat">
@@ -659,11 +675,11 @@
         <div class="content">
           <div class="card glow-cyan">
             <div class="label">シーズン40の軸</div>
-            <div class="sub">GameWithの2026年3月19日更新では，伝説S評価にコライドン，ミライドン，黒バドレックス，ホウオウ，ザシアン，ルギアが並ぶ．</div>
+            <div class="sub">GameWithの2026年3月19日更新では，伝説S評価に <span class="nowrap">コライドン，ミライドン，黒バドレックス</span>，<span class="nowrap">ホウオウ，ザシアン，ルギア</span> が並ぶ．</div>
           </div>
           <div class="card glow-red">
             <div class="label">一般枠の中心</div>
-            <div class="sub">ディンルー，パオジアン，ハバタクカミ，水ウーラオス，ランドロス霊獣，ヘイラッシャ，キラフロルが高評価．</div>
+            <div class="sub"><span class="nowrap">ディンルー，パオジアン，ハバタクカミ</span>，<span class="nowrap">水ウーラオス，ランドロス霊獣</span>，<span class="nowrap">ヘイラッシャ，キラフロル</span> が高評価．</div>
           </div>
           <div class="card">
             <div class="label">この資料の想定</div>
@@ -755,7 +771,7 @@
       </div>
       <div class="content two-col">
         <div class="big-panel glow-red">
-          <h2>結論は<br><span class="accent">コライドン × ホウオウ</span></h2>
+          <h2>結論は<br><span class="accent forced-break">コライドン × ホウオウ</span></h2>
           <p class="lead" style="margin-top:18px;">
             攻撃性能が高いコライドンと，試合を戻せるホウオウを並べることで，
             <span class="em">序盤，中盤，終盤のどの局面でも役割が切れにくい</span>．
@@ -780,7 +796,7 @@
             <div class="list" style="margin-top:12px;">
               <div>コライドンは現環境の最上位評価．</div>
               <div>ホウオウは受け性能と一貫性の高い打点を両立．</div>
-              <div>アルテマでも <span class="em">コライ×ホウオウ</span> はおすすめ禁伝ペアとして言及．</div>
+              <div>アルテマでも <span class="em nowrap">コライ×ホウオウ</span> はおすすめ禁伝ペアとして言及．</div>
               <div>残り4枠の自由度が高く，速攻寄りにも受け寄りにも組み替えやすい．</div>
             </div>
           </div>
@@ -801,32 +817,32 @@
         <h2>提案構築：古代鳳凰スタン</h2>
         <div class="team-grid">
           <div class="card team-card glow-red">
-            <div class="team-name">コライドン <span class="badge">主砲</span></div>
+            <div class="team-name"><span class="name">コライドン</span> <span class="badge">主砲</span></div>
             <div class="sub">初手性能，崩し，終盤の抜き性能を一手で担当．相手にテラスを強要しやすい中心枠．</div>
             <img class="team-portrait" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1007.png" alt="コライドン">
           </div>
           <div class="card team-card glow-gold">
-            <div class="team-name">ホウオウ <span class="badge">再展開</span></div>
+            <div class="team-name"><span class="name">ホウオウ</span> <span class="badge">再展開</span></div>
             <div class="sub">受け，詰め，状態異常耐性の軸．試合を長引かせても価値が落ちにくい．</div>
             <img class="team-portrait" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/250.png" alt="ホウオウ">
           </div>
           <div class="card team-card glow-cyan">
-            <div class="team-name">ハバタクカミ <span class="badge">高速制圧</span></div>
+            <div class="team-name"><span class="name">ハバタクカミ</span> <span class="badge">高速制圧</span></div>
             <div class="sub">ドラゴン牽制，要所のストッパー，崩し補助．終盤の詰め筋にもなる．</div>
             <img class="team-portrait" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/987.png" alt="ハバタクカミ">
           </div>
           <div class="card team-card">
-            <div class="team-name">ディンルー <span class="badge">受け駒</span></div>
+            <div class="team-name"><span class="name">ディンルー</span> <span class="badge">受け駒</span></div>
             <div class="sub">特殊方面のクッション兼ステルスロック要員．禁伝環境で最も雑に強い汎用駒の一つ．</div>
             <img class="team-portrait" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1003.png" alt="ディンルー">
           </div>
           <div class="card team-card">
-            <div class="team-name">水ウーラオス <span class="badge">崩し</span></div>
+            <div class="team-name"><span class="name">水ウーラオス</span> <span class="badge">崩し</span></div>
             <div class="sub">受け破壊と対面性能を両立．ホウオウが止まりにくい相手にも圧を出せる．</div>
             <img class="team-portrait" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10191.png" alt="水ウーラオス">
           </div>
           <div class="card team-card">
-            <div class="team-name">キラフロル <span class="badge">場作り</span></div>
+            <div class="team-name"><span class="name">キラフロル</span> <span class="badge">場作り</span></div>
             <div class="sub">毒びし，削り，初手のテンポ確保を担当．コライドンやカミの通りを作る．</div>
             <img class="team-portrait" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/970.png" alt="キラフロル">
           </div>
@@ -847,7 +863,7 @@
         <div class="big-panel">
           <h3>対 攻め構築</h3>
           <div class="list" style="margin-top:14px;">
-            <div>コライドン + ディンルー + ホウオウ</div>
+            <div><span class="nowrap">コライドン + ディンルー + ホウオウ</span></div>
             <div>まず一度受けて，削って，最後に高火力で締める．</div>
             <div>相手の高速展開を一回止められる並びを優先．</div>
           </div>
@@ -855,7 +871,7 @@
         <div class="big-panel">
           <h3>対 受け寄り構築</h3>
           <div class="list" style="margin-top:14px;">
-            <div>コライドン + 水ウーラオス + ハバタクカミ</div>
+            <div><span class="nowrap">コライドン + 水ウーラオス + ハバタクカミ</span></div>
             <div>後出しのたびに負荷をかける．</div>
             <div>一匹で詰めるより，2体で受け先を壊す意識が重要．</div>
           </div>
@@ -863,7 +879,7 @@
         <div class="big-panel">
           <h3>対 ミラー気味の禁伝軸</h3>
           <div class="list" style="margin-top:14px;">
-            <div>ホウオウ + ディンルー + ハバタクカミ</div>
+            <div><span class="nowrap">ホウオウ + ディンルー + ハバタクカミ</span></div>
             <div>初手安定を重視し，無理に殴り合わない．</div>
             <div>相手のテラス先を見てからコライドンを通す形にする．</div>
           </div>
@@ -884,7 +900,7 @@
         <div class="big-panel">
           <h2>弱点と改良案</h2>
           <div class="list" style="margin-top:18px;">
-            <div>ミライドン系の電気圧が重い場合は，水ウーラオス枠を <span class="em">ランドロス霊獣</span> に変更して地面枠を増やす．</div>
+            <div>ミライドン系の電気圧が重い場合は，水ウーラオス枠を <span class="em nowrap">ランドロス霊獣</span> に変更して地面枠を増やす．</div>
             <div>積み展開への即応力を上げたいなら，ハバタクカミを <span class="em">ミミッキュ</span> に変えてストッパー性能を強化する．</div>
             <div>受け構築をさらに崩したいなら，ホウオウかディンルーの技構成を <span class="em">毒，吹き飛ばし，挑発</span> 寄りに調整する．</div>
           </div>
