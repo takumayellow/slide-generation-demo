@@ -1,0 +1,8 @@
+# Local temp files
+temp/
+*.tmp
+*.log
+
+# OS / editor noise
+Thumbs.db
+.DS_Store
