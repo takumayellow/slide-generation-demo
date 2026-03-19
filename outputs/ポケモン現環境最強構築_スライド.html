@@ -86,8 +86,7 @@
       pointer-events: auto;
     }
 
-    .topbar,
-    .footer {
+    .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -541,10 +540,6 @@
       text-decoration: underline;
     }
 
-    .footer-note {
-      font-size: 14px;
-      color: var(--muted);
-    }
 
     .progress {
       position: fixed;
@@ -563,11 +558,6 @@
       transition: width 300ms ease;
     }
 
-    .hint {
-      color: var(--muted);
-      font-size: 13px;
-      letter-spacing: 0.04em;
-    }
 
     .nowrap {
       white-space: nowrap;
@@ -578,6 +568,7 @@
       white-space: nowrap;
     }
 
+    /* --- Tablet: keep slides, simplify grid --- */
     @media (max-width: 980px) {
       .slide {
         padding: 28px 22px 64px;
@@ -596,6 +587,149 @@
       .team-card {
         min-height: auto;
       }
+    }
+
+    /* --- Mobile: scrollable site mode --- */
+    @media (max-width: 768px) {
+      html, body {
+        overflow: auto;
+        height: auto;
+      }
+
+      .deck {
+        height: auto;
+        display: grid;
+        gap: 0;
+      }
+
+      .slide {
+        position: relative;
+        inset: auto;
+        opacity: 1;
+        transform: none;
+        transition: none;
+        pointer-events: auto;
+        padding: 32px 18px 28px;
+        min-height: auto;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .slide:last-child {
+        border-bottom: none;
+      }
+
+      h1 {
+        font-size: 32px;
+        max-width: none;
+      }
+
+      h2 {
+        font-size: 26px;
+      }
+
+      h3 {
+        font-size: 18px;
+      }
+
+      .lead {
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      .stat .value {
+        font-size: 24px;
+      }
+
+      .kicker, .pill {
+        font-size: 11px;
+        padding: 6px 10px;
+      }
+
+      .card {
+        padding: 16px;
+        border-radius: 18px;
+      }
+
+      .big-panel {
+        padding: 20px;
+        border-radius: 18px;
+      }
+
+      .hero-visual,
+      .duo-stage {
+        min-height: 180px;
+      }
+
+      .team-card {
+        padding-right: 90px;
+        min-height: auto;
+      }
+
+      .team-portrait {
+        width: 80px;
+        height: 80px;
+      }
+
+      .team-name {
+        font-size: 18px;
+      }
+
+      .tier-row {
+        grid-template-columns: 56px 1fr;
+      }
+
+      .tier {
+        font-size: 16px;
+        min-height: 40px;
+        border-radius: 12px;
+      }
+
+      .chip {
+        font-size: 13px;
+        padding: 7px 10px;
+      }
+
+      .list {
+        font-size: 15px;
+      }
+
+      .callout strong {
+        font-size: 22px;
+      }
+
+      .flow .step {
+        font-size: 14px;
+        padding: 12px;
+        border-radius: 14px;
+      }
+
+      .image-band {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .image-chip {
+        min-height: 72px;
+        border-radius: 14px;
+        padding: 8px;
+      }
+
+      .image-chip img {
+        height: 56px;
+      }
+
+      .source-list {
+        font-size: 14px;
+      }
+
+      .source-list a {
+        word-break: break-all;
+      }
+
+      .progress {
+        display: none;
+      }
+
     }
   </style>
 </head>
@@ -647,10 +781,6 @@
           </div>
         </div>
       </div>
-      <div class="footer">
-        <div class="footer-note">派手な見た目よりも，選出の通しやすさを主役に据えた構築案．</div>
-        <div class="hint">→ / Space で次へ</div>
-      </div>
     </section>
 
     <section class="slide">
@@ -686,10 +816,6 @@
             <div class="sub">ダブルではなく <span class="em">シングルバトル</span> を対象とする．構築名の響きに合わせて，強くて見栄えもする王道パワー型を採用．</div>
           </div>
         </div>
-      </div>
-      <div class="footer">
-        <div class="footer-note">「現環境」は変動するため，この資料では 2026-03-19 の情報で固定している．</div>
-        <div class="hint">← / → で移動</div>
       </div>
     </section>
 
@@ -758,10 +884,6 @@
           </div>
         </div>
       </div>
-      <div class="footer">
-        <div class="footer-note">強い並びは，単に高種族値を足すことではなく，受け先をずらして勝ち筋を複線化すること．</div>
-        <div class="hint">3 / 8</div>
-      </div>
     </section>
 
     <section class="slide">
@@ -801,10 +923,6 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="footer">
-        <div class="footer-note">強い構築は，単体の正解より，並びとしての事故率の低さで決まる．</div>
-        <div class="hint">4 / 8</div>
       </div>
     </section>
 
@@ -848,10 +966,6 @@
           </div>
         </div>
       </div>
-      <div class="footer">
-        <div class="footer-note">見栄えのする禁伝2体に，実戦で強い一般枠を最短距離で添えた構成．</div>
-        <div class="hint">5 / 8</div>
-      </div>
     </section>
 
     <section class="slide">
@@ -885,10 +999,6 @@
           </div>
         </div>
       </div>
-      <div class="footer">
-        <div class="footer-note">「毎試合これを出せば最低限戦える」という基本選出を持つことが，最強構築っぽさより大事．</div>
-        <div class="hint">6 / 8</div>
-      </div>
     </section>
 
     <section class="slide">
@@ -914,16 +1024,12 @@
             </div>
           </div>
           <div class="card glow-cyan">
-            <h3>プレゼン用の一言</h3>
+            <h3>まとめ</h3>
             <div class="sub" style="margin-top:12px;">
               「最強構築」とは，理論値最大ではなく，<span class="em">環境上位への勝ち筋を複数持つ再現性の高い6体</span> である．
             </div>
           </div>
         </div>
-      </div>
-      <div class="footer">
-        <div class="footer-note">強い構築は完成品ではなく，環境に合わせて差し替え可能なフレームとして作る．</div>
-        <div class="hint">7 / 8</div>
       </div>
     </section>
 
@@ -962,10 +1068,6 @@
           </p>
         </div>
       </div>
-      <div class="footer">
-        <div class="footer-note">End of Deck</div>
-        <div class="hint">Home / End で先頭・末尾へ移動</div>
-      </div>
     </section>
   </div>
 
@@ -976,17 +1078,27 @@
     const progressBar = document.getElementById("progressBar");
     let index = 0;
 
+    function isMobile() {
+      return window.innerWidth <= 768;
+    }
+
     function render() {
+      if (isMobile()) {
+        slides.forEach((slide) => slide.classList.add("active"));
+        return;
+      }
       slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
       progressBar.style.width = `${((index + 1) / slides.length) * 100}%`;
     }
 
     function go(next) {
+      if (isMobile()) return;
       index = Math.max(0, Math.min(slides.length - 1, next));
       render();
     }
 
     window.addEventListener("keydown", (event) => {
+      if (isMobile()) return;
       if (["ArrowRight", "PageDown", " ", "Enter"].includes(event.key)) {
         event.preventDefault();
         go(index + 1);
@@ -1004,11 +1116,30 @@
     });
 
     window.addEventListener("click", (event) => {
+      if (isMobile()) return;
       const leftHalf = event.clientX < window.innerWidth * 0.35;
       const rightHalf = event.clientX > window.innerWidth * 0.65;
       if (leftHalf) go(index - 1);
       if (rightHalf) go(index + 1);
     });
+
+    /* Touch swipe for tablet (slide mode) */
+    let touchStartX = 0;
+    window.addEventListener("touchstart", (e) => {
+      if (isMobile()) return;
+      touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+
+    window.addEventListener("touchend", (e) => {
+      if (isMobile()) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) {
+        go(dx < 0 ? index + 1 : index - 1);
+      }
+    }, { passive: true });
+
+    /* Re-render on resize (switching between mobile/desktop) */
+    window.addEventListener("resize", render);
 
     render();
   </script>
