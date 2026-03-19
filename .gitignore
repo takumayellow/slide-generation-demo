@@ -6,3 +6,9 @@ temp/
 # OS / editor noise
 Thumbs.db
 .DS_Store
+
+# Handoff docs (not for repo)
+handoff_*.md
+
+# PowerPoint temp files
+~$*.pptx
