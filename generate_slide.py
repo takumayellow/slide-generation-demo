@@ -1,271 +1,508 @@
-"""Generate the 'Logic' slide for StepBy hackathon presentation."""
+"""Generate the StepBy hackathon 'Logic' slide as a polished PPTX."""
+from pathlib import Path
+
 from pptx import Presentation
-from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
-from pptx.enum.shapes import MSO_SHAPE
-import copy
+from pptx.enum.shapes import MSO_CONNECTOR, MSO_SHAPE
+from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
+from pptx.util import Emu, Inches, Pt
 
-# -- Constants --
+
+# ---------------------------------------------------------------------------
+# Colors
+# ---------------------------------------------------------------------------
 NAVY = RGBColor(0x26, 0x22, 0x62)
-BLUE = RGBColor(0x00, 0xAE, 0xEF)
+HEADER_BLUE = RGBColor(0x1B, 0x75, 0xBC)
+CYAN = RGBColor(0x00, 0xAE, 0xEF)
+GITHUB_BG = RGBColor(0x2D, 0x33, 0x3B)
+GEMINI_BG = RGBColor(0x6C, 0x5C, 0xE7)
+UI_BG = RGBColor(0x3B, 0x82, 0xF6)
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)
-DARK_GRAY = RGBColor(0x2D, 0x33, 0x3B)
-PURPLE = RGBColor(0x6C, 0x5C, 0xE7)
-ACCENT_BLUE = RGBColor(0x3B, 0x82, 0xF6)
-LIGHT_BG = RGBColor(0xF0, 0xF4, 0xF8)
+LIGHT_BG = RGBColor(0xF4, 0xF7, 0xFB)
+CARD_BG = RGBColor(0xF8, 0xFB, 0xFF)
 MUTED = RGBColor(0x64, 0x74, 0x8B)
-
-SLIDE_W = Emu(18288000)  # 20 inches
-SLIDE_H = Emu(10287000)  # 11.25 inches
-
-# Load template to get dimensions and header
-src = Presentation("青と白　シンプル　ポートフォリオ　プレゼンテーション.pptx")
-prs = Presentation()
-prs.slide_width = src.slide_width
-prs.slide_height = src.slide_height
-
-# Use blank layout
-blank_layout = prs.slide_layouts[6]
-slide = prs.slides.add_slide(blank_layout)
+LIGHT_LINE = RGBColor(0xD9, 0xE1, 0xEC)
 
 
-def add_text_box(slide, left, top, width, height, text, font_size=18,
-                 bold=False, color=NAVY, alignment=PP_ALIGN.LEFT,
-                 font_name="BIZ UDPGothic"):
-    txBox = slide.shapes.add_textbox(left, top, width, height)
-    tf = txBox.text_frame
+ROOT = Path(__file__).resolve().parent
+TEMPLATE = ROOT / "青と白　シンプル　ポートフォリオ　プレゼンテーション.pptx"
+OUTPUT_DIR = ROOT / "outputs" / "StepByハッカソン"
+OUTPUT_PATH = OUTPUT_DIR / "ロジック_スライド.pptx"
+
+
+def add_text_box(
+    slide,
+    left,
+    top,
+    width,
+    height,
+    text,
+    *,
+    font_size=18,
+    bold=False,
+    color=NAVY,
+    alignment=PP_ALIGN.LEFT,
+    font_name="Yu Gothic UI",
+    vertical_anchor=MSO_ANCHOR.TOP,
+    margin_left=0.0,
+    margin_right=0.0,
+    margin_top=0.0,
+    margin_bottom=0.0,
+):
+    box = slide.shapes.add_textbox(left, top, width, height)
+    tf = box.text_frame
     tf.word_wrap = True
-    p = tf.paragraphs[0]
-    p.alignment = alignment
-    run = p.add_run()
+    tf.vertical_anchor = vertical_anchor
+    tf.margin_left = Inches(margin_left)
+    tf.margin_right = Inches(margin_right)
+    tf.margin_top = Inches(margin_top)
+    tf.margin_bottom = Inches(margin_bottom)
+    paragraph = tf.paragraphs[0]
+    paragraph.alignment = alignment
+    run = paragraph.add_run()
     run.text = text
     run.font.size = Pt(font_size)
     run.font.bold = bold
     run.font.color.rgb = color
     run.font.name = font_name
-    return txBox
+    return box
 
 
-def add_rounded_rect(slide, left, top, width, height, fill_color,
-                     border_color=None):
-    shape = slide.shapes.add_shape(
-        MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height
-    )
+def add_paragraphs(
+    slide,
+    left,
+    top,
+    width,
+    height,
+    paragraphs,
+    *,
+    color=WHITE,
+    font_name="Yu Gothic UI",
+    margin=0.16,
+    vertical_anchor=MSO_ANCHOR.MIDDLE,
+):
+    box = slide.shapes.add_textbox(left, top, width, height)
+    tf = box.text_frame
+    tf.word_wrap = True
+    tf.vertical_anchor = vertical_anchor
+    tf.margin_left = Inches(margin)
+    tf.margin_right = Inches(margin)
+    tf.margin_top = Inches(margin)
+    tf.margin_bottom = Inches(margin)
+
+    for idx, item in enumerate(paragraphs):
+        paragraph = tf.paragraphs[0] if idx == 0 else tf.add_paragraph()
+        paragraph.alignment = item.get("align", PP_ALIGN.CENTER)
+        paragraph.space_after = Pt(item.get("space_after", 4))
+        paragraph.space_before = Pt(item.get("space_before", 0))
+        run = paragraph.add_run()
+        run.text = item["text"]
+        run.font.size = Pt(item.get("size", 16))
+        run.font.bold = item.get("bold", False)
+        run.font.color.rgb = item.get("color", color)
+        run.font.name = item.get("font_name", font_name)
+    return box
+
+
+def add_round_rect(slide, left, top, width, height, fill, *, radius=0.08, line=None):
+    shape = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height)
     shape.fill.solid()
-    shape.fill.fore_color.rgb = fill_color
-    if border_color:
-        shape.line.color.rgb = border_color
-        shape.line.width = Pt(1)
+    shape.fill.fore_color.rgb = fill
+    if line:
+      shape.line.color.rgb = line
+      shape.line.width = Pt(1.2)
     else:
-        shape.line.fill.background()
-    # Adjust corner radius
-    shape.adjustments[0] = 0.05
+      shape.line.fill.background()
+    shape.adjustments[0] = radius
     return shape
 
 
-def add_multiline_box(slide, left, top, width, height, lines, font_size=14,
-                      color=WHITE, bold_first=True, line_spacing=1.4,
-                      font_name="BIZ UDPGothic"):
-    """Add a text box with multiple lines."""
-    txBox = slide.shapes.add_textbox(left, top, width, height)
-    tf = txBox.text_frame
-    tf.word_wrap = True
-
-    for i, line in enumerate(lines):
-        if i == 0:
-            p = tf.paragraphs[0]
-        else:
-            p = tf.add_paragraph()
-        p.space_after = Pt(4)
-        run = p.add_run()
-        run.text = line
-        run.font.size = Pt(font_size)
-        run.font.color.rgb = color
-        run.font.bold = bold_first and i == 0
-        run.font.name = font_name
-    return txBox
-
-
-# ============================================================
-# 1. Header bar (matching template)
-# ============================================================
-header_h = Emu(1619250)
-header = slide.shapes.add_shape(
-    MSO_SHAPE.RECTANGLE, 0, 0, SLIDE_W, header_h
-)
-header.fill.solid()
-header.fill.fore_color.rgb = NAVY
-header.line.fill.background()
-
-# Page number "03"
-add_text_box(
-    slide, Inches(0.4), Inches(0.15), Inches(1.5), Inches(1.4),
-    "03", font_size=60, bold=True, color=WHITE, alignment=PP_ALIGN.LEFT
-)
-
-# Title "ロジック"
-add_text_box(
-    slide, Inches(2.5), Inches(0.15), Inches(10), Inches(1.4),
-    "ロジック", font_size=60, bold=True, color=WHITE, alignment=PP_ALIGN.LEFT
-)
-
-
-# ============================================================
-# 2. Subtitle
-# ============================================================
-add_text_box(
-    slide, Inches(1.0), Inches(2.2), Inches(18), Inches(0.7),
-    "GitHub API  →  Gemini AI (JSON)  →  初心者向けUI",
-    font_size=26, bold=True, color=NAVY, alignment=PP_ALIGN.CENTER
-)
-
-
-# ============================================================
-# 3. Flow diagram - 3 boxes with arrows
-# ============================================================
-box_w = Inches(5.0)
-box_h = Inches(3.0)
-box_y = Inches(3.2)
-gap = Inches(1.4)
-total_w = box_w * 3 + gap * 2
-start_x = (SLIDE_W - total_w) // 2
-
-# --- Box 1: GitHub API / Octokit ---
-box1_x = start_x
-add_rounded_rect(slide, box1_x, box_y, box_w, box_h, DARK_GRAY)
-add_multiline_box(
-    slide, box1_x + Inches(0.4), box_y + Inches(0.3),
-    box_w - Inches(0.8), box_h - Inches(0.5),
-    [
-        "GitHub API / Octokit",
-        "",
-        "リポジトリ情報を取得",
-        "・ファイル構造 / README",
-        "・Issue (title, body)",
-        "・PR diff",
-    ],
-    font_size=16, color=WHITE, bold_first=True
-)
-
-# --- Arrow 1 ---
-arrow1_x = box1_x + box_w + Inches(0.15)
-arrow1_y = box_y + box_h // 2 - Inches(0.25)
-add_text_box(
-    slide, arrow1_x, arrow1_y, gap - Inches(0.3), Inches(0.5),
-    "→", font_size=48, bold=True, color=BLUE, alignment=PP_ALIGN.CENTER
-)
-
-# --- Box 2: Gemini 2.5 Flash ---
-box2_x = box1_x + box_w + gap
-add_rounded_rect(slide, box2_x, box_y, box_w, box_h, PURPLE)
-add_multiline_box(
-    slide, box2_x + Inches(0.4), box_y + Inches(0.3),
-    box_w - Inches(0.8), box_h - Inches(0.5),
-    [
-        "Gemini 2.5 Flash",
-        "",
-        "初心者向けに構造化",
-        "→ JSON出力",
-    ],
-    font_size=16, color=WHITE, bold_first=True
-)
-
-# --- Arrow 2 ---
-arrow2_x = box2_x + box_w + Inches(0.15)
-add_text_box(
-    slide, arrow2_x, arrow1_y, gap - Inches(0.3), Inches(0.5),
-    "→", font_size=48, bold=True, color=BLUE, alignment=PP_ALIGN.CENTER
-)
-
-# --- Box 3: 初心者向けUI ---
-box3_x = box2_x + box_w + gap
-add_rounded_rect(slide, box3_x, box_y, box_w, box_h, ACCENT_BLUE)
-add_multiline_box(
-    slide, box3_x + Inches(0.4), box_y + Inches(0.3),
-    box_w - Inches(0.8), box_h - Inches(0.5),
-    [
-        "初心者向けUI",
-        "",
-        "わかりやすく表示",
-        "・極小ステップ",
-        "・公式ドキュメントリンク",
-        "・コマンドコピペ",
-    ],
-    font_size=16, color=WHITE, bold_first=True
-)
-
-
-# ============================================================
-# 4. Four pipelines (below flow diagram)
-# ============================================================
-pipeline_y = Inches(6.8)
-pipeline_x = start_x + Inches(0.3)
-pipeline_w = Inches(17.5)
-
-pipelines = [
-    ("①", "リポジトリ分析", "学習ロードマップ + 全Issue分解"),
-    ("②", "Issue", "極小タスク分解"),
-    ("③", "プロジェクト", "オンボーディングガイド自動生成"),
-    ("④", "PR diff", "AIコードレビュー"),
-]
-
-col_w = pipeline_w // 2
-row_h = Inches(0.65)
-
-for i, (num, input_text, output_text) in enumerate(pipelines):
-    row = i // 2
-    col = i % 2
-    px = pipeline_x + col * col_w
-    py = pipeline_y + row * row_h
-
-    # Number circle
-    circle = slide.shapes.add_shape(
-        MSO_SHAPE.OVAL, px, py + Inches(0.05), Inches(0.45), Inches(0.45)
-    )
+def add_circle(slide, left, top, size, fill):
+    circle = slide.shapes.add_shape(MSO_SHAPE.OVAL, left, top, size, size)
     circle.fill.solid()
-    circle.fill.fore_color.rgb = BLUE
+    circle.fill.fore_color.rgb = fill
     circle.line.fill.background()
+    return circle
 
-    # Number text
-    tf = circle.text_frame
-    tf.word_wrap = False
-    p = tf.paragraphs[0]
-    p.alignment = PP_ALIGN.CENTER
-    run = p.add_run()
-    run.text = num
-    run.font.size = Pt(16)
-    run.font.bold = True
-    run.font.color.rgb = WHITE
-    run.font.name = "BIZ UDPGothic"
 
-    # Pipeline text
+def add_vertical_divider(slide, x, top, height):
+    line = slide.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, x, top, x, top + height)
+    line.line.color.rgb = LIGHT_LINE
+    line.line.width = Pt(1.3)
+    return line
+
+
+def add_arrow(slide, left, top, width, height):
+    arrow = slide.shapes.add_shape(MSO_SHAPE.CHEVRON, left, top, width, height)
+    arrow.fill.solid()
+    arrow.fill.fore_color.rgb = CYAN
+    arrow.line.fill.background()
+    return arrow
+
+
+def add_monitor_icon(slide, left, top, size):
+    screen = slide.shapes.add_shape(
+        MSO_SHAPE.ROUNDED_RECTANGLE, left, top, size, size * 0.62
+    )
+    screen.fill.solid()
+    screen.fill.fore_color.rgb = WHITE
+    screen.line.fill.background()
+    screen.adjustments[0] = 0.08
+
+    bar = slide.shapes.add_shape(
+        MSO_SHAPE.RECTANGLE,
+        left + size * 0.18,
+        top + size * 0.67,
+        size * 0.64,
+        size * 0.08,
+    )
+    bar.fill.solid()
+    bar.fill.fore_color.rgb = WHITE
+    bar.line.fill.background()
+
+    stand = slide.shapes.add_shape(
+        MSO_SHAPE.ISOSCELES_TRIANGLE,
+        left + size * 0.41,
+        top + size * 0.57,
+        size * 0.18,
+        size * 0.18,
+    )
+    stand.fill.solid()
+    stand.fill.fore_color.rgb = WHITE
+    stand.line.fill.background()
+    stand.rotation = 180
+
+
+def build_slide():
+    src = Presentation(str(TEMPLATE))
+    prs = Presentation()
+    prs.slide_width = src.slide_width
+    prs.slide_height = src.slide_height
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+
+    slide_w = prs.slide_width
+    slide_h = prs.slide_height
+
+    # Background
+    background = slide.background.fill
+    background.solid()
+    background.fore_color.rgb = WHITE
+
+    # ------------------------------------------------------------------
+    # Header
+    # ------------------------------------------------------------------
+    header_h = Inches(1.65)
+    left_block_w = Inches(3.55)
+
+    header = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, slide_w, header_h)
+    header.fill.solid()
+    header.fill.fore_color.rgb = NAVY
+    header.line.fill.background()
+
+    left_block = slide.shapes.add_shape(
+        MSO_SHAPE.RECTANGLE, Emu(-Inches(0.18)), 0, left_block_w, header_h
+    )
+    left_block.fill.solid()
+    left_block.fill.fore_color.rgb = HEADER_BLUE
+    left_block.line.fill.background()
+
     add_text_box(
-        slide, px + Inches(0.6), py + Inches(0.05),
-        col_w - Inches(0.8), Inches(0.45),
-        f"{input_text}  →  {output_text}",
-        font_size=16, bold=False, color=NAVY
+        slide,
+        Inches(0.48),
+        Inches(0.10),
+        Inches(1.7),
+        Inches(1.3),
+        "03",
+        font_size=54,
+        bold=True,
+        color=WHITE,
+        alignment=PP_ALIGN.CENTER,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
+    )
+    add_text_box(
+        slide,
+        Inches(2.62),
+        Inches(0.18),
+        Inches(7.6),
+        Inches(1.2),
+        "ロジック",
+        font_size=58,
+        bold=True,
+        color=WHITE,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
     )
 
+    # ------------------------------------------------------------------
+    # Subtitle
+    # ------------------------------------------------------------------
+    subtitle_top = Inches(1.95)
+    add_text_box(
+        slide,
+        Inches(1.3),
+        subtitle_top,
+        Inches(17.4),
+        Inches(0.55),
+        "GitHub API  →  Gemini AI（JSON）  →  初心者向けUI",
+        font_size=24,
+        bold=True,
+        color=NAVY,
+        alignment=PP_ALIGN.CENTER,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
+    )
 
-# ============================================================
-# 5. Bottom note
-# ============================================================
-note_y = Inches(8.6)
-note_bg = add_rounded_rect(
-    slide, start_x, note_y, total_w, Inches(0.7), LIGHT_BG
-)
-add_text_box(
-    slide, start_x + Inches(0.5), note_y + Inches(0.1),
-    total_w - Inches(1.0), Inches(0.5),
-    "全パイプライン共通:  Gemini 2.5 Flash  /  JSON構造化出力  /  Firestore永続化",
-    font_size=16, bold=False, color=MUTED, alignment=PP_ALIGN.CENTER
-)
+    # ------------------------------------------------------------------
+    # Flow area
+    # ------------------------------------------------------------------
+    flow_top = Inches(2.65)
+    flow_h = Inches(3.45)
+    col_w = Inches(5.4)
+    gap = Inches(0.55)
+    start_x = Inches(1.2)
+    circle_size = Inches(1.28)
+    circle_y = flow_top + Inches(0.08)
+    title_y = flow_top + Inches(1.52)
+    card_y = flow_top + Inches(2.02)
+    card_h = Inches(1.18)
+
+    columns = [
+        {
+            "x": start_x,
+            "circle_fill": CYAN,
+            "card_fill": GITHUB_BG,
+            "title": "GitHub API / Octokit",
+            "body": [
+                "リポジトリ情報を取得",
+                "・ファイル構造 / README",
+                "・Issue（title, body）",
+                "・PR diff",
+            ],
+            "title_color": NAVY,
+            "body_color": WHITE,
+            "icon": "github",
+        },
+        {
+            "x": start_x + col_w + gap,
+            "circle_fill": CYAN,
+            "card_fill": GEMINI_BG,
+            "title": "Gemini 2.5 Flash",
+            "body": [
+                "初心者向けに構造化",
+                "→ JSON出力",
+            ],
+            "title_color": NAVY,
+            "body_color": WHITE,
+            "icon": "sparkle",
+        },
+        {
+            "x": start_x + (col_w + gap) * 2,
+            "circle_fill": CYAN,
+            "card_fill": UI_BG,
+            "title": "初心者向けUI",
+            "body": [
+                "わかりやすく表示",
+                "・極小ステップ",
+                "・公式ドキュメントリンク",
+                "・コマンドコピペ",
+            ],
+            "title_color": NAVY,
+            "body_color": WHITE,
+            "icon": "monitor",
+        },
+    ]
+
+    for idx, col in enumerate(columns):
+        center_x = col["x"] + (col_w - circle_size) / 2
+        add_circle(slide, center_x, circle_y, circle_size, col["circle_fill"])
+
+        if col["icon"] == "github":
+            add_text_box(
+                slide,
+                center_x,
+                circle_y + Inches(0.05),
+                circle_size,
+                circle_size - Inches(0.05),
+                "GH",
+                font_size=28,
+                bold=True,
+                color=WHITE,
+                alignment=PP_ALIGN.CENTER,
+                vertical_anchor=MSO_ANCHOR.MIDDLE,
+            )
+        elif col["icon"] == "sparkle":
+            add_text_box(
+                slide,
+                center_x,
+                circle_y + Inches(0.02),
+                circle_size,
+                circle_size,
+                "✦",
+                font_size=34,
+                bold=True,
+                color=WHITE,
+                alignment=PP_ALIGN.CENTER,
+                vertical_anchor=MSO_ANCHOR.MIDDLE,
+                font_name="Yu Gothic UI Symbol",
+            )
+        else:
+            add_monitor_icon(slide, center_x + Inches(0.18), circle_y + Inches(0.24), Inches(0.92))
+
+        if idx < 2:
+            add_vertical_divider(
+                slide,
+                col["x"] + col_w + gap / 2,
+                flow_top + Inches(0.10),
+                flow_h - Inches(0.15),
+            )
+
+        add_text_box(
+            slide,
+            col["x"] + Inches(0.05),
+            title_y,
+            col_w - Inches(0.1),
+            Inches(0.40),
+            col["title"],
+            font_size=23,
+            bold=True,
+            color=col["title_color"],
+            alignment=PP_ALIGN.CENTER,
+            vertical_anchor=MSO_ANCHOR.MIDDLE,
+        )
+
+        add_round_rect(
+            slide,
+            col["x"] + Inches(0.18),
+            card_y,
+            col_w - Inches(0.36),
+            card_h,
+            col["card_fill"],
+            radius=0.08,
+        )
+
+        paragraphs = [{"text": col["body"][0], "size": 18, "bold": True}]
+        for line in col["body"][1:]:
+            paragraphs.append({"text": line, "size": 14, "space_after": 2})
+
+        add_paragraphs(
+            slide,
+            col["x"] + Inches(0.32),
+            card_y + Inches(0.06),
+            col_w - Inches(0.64),
+            card_h - Inches(0.12),
+            paragraphs,
+            color=col["body_color"],
+            vertical_anchor=MSO_ANCHOR.MIDDLE,
+        )
+
+    add_arrow(slide, start_x + col_w + Inches(0.08), flow_top + Inches(1.42), Inches(0.34), Inches(0.24))
+    add_arrow(
+        slide,
+        start_x + (col_w + gap) * 2 - Inches(0.47),
+        flow_top + Inches(1.42),
+        Inches(0.34),
+        Inches(0.24),
+    )
+
+    # ------------------------------------------------------------------
+    # Pipeline cards
+    # ------------------------------------------------------------------
+    list_top = Inches(6.45)
+    list_left = Inches(1.35)
+    list_w = Inches(17.3)
+    card_gap = Inches(0.28)
+    pipeline_card_w = (list_w - card_gap) / 2
+    pipeline_card_h = Inches(0.86)
+
+    pipeline_items = [
+        ("①", "リポジトリ分析", "学習ロードマップ + 全Issue分解"),
+        ("②", "Issue", "極小タスク分解"),
+        ("③", "プロジェクト", "オンボーディングガイド自動生成"),
+        ("④", "PR diff", "AIコードレビュー"),
+    ]
+
+    for i, (num, left_text, right_text) in enumerate(pipeline_items):
+        row = i // 2
+        col = i % 2
+        x = list_left + col * (pipeline_card_w + card_gap)
+        y = list_top + row * (pipeline_card_h + Inches(0.22))
+
+        add_round_rect(slide, x, y, pipeline_card_w, pipeline_card_h, CARD_BG, radius=0.05, line=LIGHT_LINE)
+        add_circle(slide, x + Inches(0.18), y + Inches(0.16), Inches(0.52), CYAN)
+        add_text_box(
+            slide,
+            x + Inches(0.18),
+            y + Inches(0.14),
+            Inches(0.52),
+            Inches(0.52),
+            num,
+            font_size=16,
+            bold=True,
+            color=WHITE,
+            alignment=PP_ALIGN.CENTER,
+            vertical_anchor=MSO_ANCHOR.MIDDLE,
+        )
+
+        add_text_box(
+            slide,
+            x + Inches(0.82),
+            y + Inches(0.11),
+            pipeline_card_w - Inches(1.02),
+            Inches(0.24),
+            f"{left_text}  →",
+            font_size=15,
+            bold=True,
+            color=NAVY,
+            vertical_anchor=MSO_ANCHOR.MIDDLE,
+        )
+        add_text_box(
+            slide,
+            x + Inches(0.82),
+            y + Inches(0.37),
+            pipeline_card_w - Inches(1.02),
+            Inches(0.26),
+            right_text,
+            font_size=13,
+            bold=False,
+            color=MUTED,
+            vertical_anchor=MSO_ANCHOR.MIDDLE,
+        )
+
+    # ------------------------------------------------------------------
+    # Bottom note
+    # ------------------------------------------------------------------
+    note_top = Inches(8.72)
+    add_round_rect(
+        slide,
+        Inches(1.32),
+        note_top,
+        Inches(17.36),
+        Inches(0.64),
+        LIGHT_BG,
+        radius=0.04,
+        line=LIGHT_LINE,
+    )
+    add_text_box(
+        slide,
+        Inches(1.58),
+        note_top + Inches(0.06),
+        Inches(16.84),
+        Inches(0.52),
+        "全パイプライン共通:  Gemini 2.5 Flash  /  JSON構造化出力  /  Firestore永続化",
+        font_size=15,
+        bold=True,
+        color=MUTED,
+        alignment=PP_ALIGN.CENTER,
+        vertical_anchor=MSO_ANCHOR.MIDDLE,
+    )
+
+    return prs
 
 
-# ============================================================
-# Save
-# ============================================================
-output_path = "outputs/StepByハッカソン/ロジック_スライド.pptx"
-prs.save(output_path)
-print(f"Saved: {output_path}")
+def main():
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    prs = build_slide()
+    prs.save(str(OUTPUT_PATH))
+    print(f"Saved: {OUTPUT_PATH}")
+
+
+if __name__ == "__main__":
+    main()
