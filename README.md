@@ -2,6 +2,10 @@
 
 テーマ指定から，単体HTMLのプレゼン資料を作るための作業用リポジトリ．
 
+## 公開サイト
+
+**[→ スライドを見る](https://takumayellow.github.io/slide-generation-demo/)**
+
 ## 現在の成果物
 
 - メインスライド: `outputs/ポケモン現環境最強構築_スライド.html`
