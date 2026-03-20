@@ -2,6 +2,10 @@
 
 テーマごとにスライド成果物と制作素材を管理する作業用リポジトリ．
 
+## 公開サイト
+
+**[→ スライドを見る](https://takumayellow.github.io/slide-generation-demo/)**
+
 ## 現在の構成
 
 - `StepByハッカソン/`
