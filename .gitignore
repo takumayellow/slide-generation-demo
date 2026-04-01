@@ -12,3 +12,7 @@ handoff_*.md
 
 # PowerPoint temp files
 ~$*.pptx
+
+# StepByハッカソン slides (non-public)
+StepByハッカソン/
+outputs/StepByハッカソン/
